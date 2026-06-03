@@ -3,7 +3,7 @@ type Player = {
   name: string;
   isHost: boolean;
   isReady: boolean;
-  mustSubmitTwo: boolean;
+  mustSubmitTwoProposals: boolean;
   submittedCount: number;
 };
 
