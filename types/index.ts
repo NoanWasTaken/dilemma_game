@@ -3,8 +3,10 @@ type Player = {
   name: string;
   isHost: boolean;
   isReady: boolean;
-  mustSubmitTwo: boolean;
+  mustSubmitTwoProposals: boolean;
   submittedCount: number;
+  isConnected?: boolean;
+  token: string; //crypto.randomUUID()
 };
 
 type Proposal = {
