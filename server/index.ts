@@ -2,8 +2,11 @@ import { Server as Engine } from "@socket.io/bun-engine";
 import { Server } from "socket.io";
 import { Hono } from "hono";
 import type { Room } from "@/types";
-import { registerRoomHandlers } from "./handler/room";
-import { registerGameHandlers } from "./handler/game";
+import { registerRoomJoinHandlers } from "./handlers/room.join";
+import { registerRoomManageHandlers } from "./handlers/room.manage";
+import { registerRoomTransitionHandlers } from "./handlers/room.transition";
+import { registerGameSubmissionHandlers } from "./handlers/game.submission";
+import { registerGameDuelHandlers } from "./handlers/game.duel";
 import { cors } from "hono/cors";
 
 const rooms = new Map<string, Room>();
@@ -24,8 +27,11 @@ const engine = new Engine({
 io.bind(engine);
 
 io.on("connection", (socket) => {
-  registerRoomHandlers(io, socket, rooms);
-  registerGameHandlers(io, socket, rooms);
+  registerRoomJoinHandlers(io, socket, rooms);
+  registerRoomManageHandlers(io, socket, rooms);
+  registerRoomTransitionHandlers(io, socket, rooms);
+  registerGameSubmissionHandlers(io, socket, rooms);
+  registerGameDuelHandlers(io, socket, rooms);
 });
 
 const app = new Hono();
@@ -38,7 +44,7 @@ app.use(
 
 const { websocket } = engine.handler();
 
-export default {
+const serverConfig = {
   port: 3001,
   idleTimeout: 30,
 
@@ -67,3 +73,5 @@ export default {
   },
   websocket,
 };
+
+export default serverConfig;

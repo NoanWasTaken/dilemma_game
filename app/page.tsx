@@ -25,7 +25,7 @@ export default function Home() {
 
     socket.on("room:error", (message: string) => {
       setIsJoining(false); // on reset si erreur
-      console.error(message);
+      alert(message);
     });
 
     return () => {

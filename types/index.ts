@@ -5,6 +5,8 @@ type Player = {
   isReady: boolean;
   mustSubmitTwoProposals: boolean;
   submittedCount: number;
+  isConnected?: boolean;
+  token: string; //crypto.randomUUID()
 };
 
 type Proposal = {

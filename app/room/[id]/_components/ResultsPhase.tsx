@@ -1,10 +1,10 @@
-// /app/room/[id]/components/ResultsPhase.tsx
 "use client";
 
 import socket from "@/lib/socket";
 import { Player, Room } from "@/types";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import BracketView from "@/features/duel/ui/BracketView";
 
 type Props = {
   room: Room;
@@ -25,14 +25,12 @@ export default function ResultsPhase({ room, roomId, currentPlayer }: Props) {
 
   const winnerAuthor = room.players.find((p) => p.id === winner?.authorId);
   const [nextRoomId, setNextRoomId] = useState<string | null>(null);
-  const [hostName, setHostName] = useState<string | null>(null);
 
   useEffect(() => {
     socket.on(
       "room:next",
-      ({ newRoomId, hostName }: { newRoomId: string; hostName: string }) => {
+      ({ newRoomId }: { newRoomId: string }) => {
         setNextRoomId(newRoomId);
-        setHostName(hostName);
         if (currentPlayer?.isHost) {
           socket.emit("room:transfer", roomId, newRoomId, currentPlayer.name);
           router.push(`/room/${newRoomId}`);
@@ -61,26 +59,7 @@ export default function ResultsPhase({ room, roomId, currentPlayer }: Props) {
         <p>Aucun gagnant trouvé.</p>
       )}
 
-      <div>
-        <p>Récap du bracket :</p>
-        {room.bracket.map((round, roundIndex) => (
-          <div key={roundIndex}>
-            <p>
-              {roundIndex === room.bracket.length - 1
-                ? "Finale"
-                : `Round ${roundIndex + 1}`}
-            </p>
-            {round.map((duel) => (
-              <p key={duel.id}>
-                {duel.proposalA.text} vs {duel.proposalB.text} →{" "}
-                {duel.winner === "A"
-                  ? duel.proposalA.text
-                  : duel.proposalB.text}
-              </p>
-            ))}
-          </div>
-        ))}
-      </div>
+      <BracketView room={room} />
 
       {currentPlayer?.isHost ? (
         <button onClick={() => socket.emit("room:next", roomId)}>
